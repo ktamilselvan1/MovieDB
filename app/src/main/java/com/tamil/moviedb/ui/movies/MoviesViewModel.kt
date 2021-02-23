@@ -71,7 +71,7 @@ class MoviesViewModel @Inject constructor(private val moviesRepository: MoviesRe
         viewModelScope.launch {
             when (val response = moviesRepository.getMovieDetail(movieId)) {
                 is NetworkResource.NetworkError -> {
-                    _moviesListResponse.postValue(
+                    _movieDetailResponse.postValue(
                         Resource.error(
                             "Check your internet connection",
                             null
@@ -79,7 +79,7 @@ class MoviesViewModel @Inject constructor(private val moviesRepository: MoviesRe
                     )
                 }
                 is NetworkResource.ResponseError -> {
-                    _moviesListResponse.postValue(
+                    _movieDetailResponse.postValue(
                         Resource.error(
                             response.message ?: "Something went wrong",
                             null
