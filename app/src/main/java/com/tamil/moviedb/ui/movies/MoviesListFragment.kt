@@ -2,6 +2,7 @@ package com.tamil.moviedb.ui.movies
 
 import android.app.SearchManager
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -81,6 +82,10 @@ class MoviesListFragment : Fragment(R.layout.fragment_movies_list) {
          * Search view debounce implementation
          */
         searchView?.let {
+            it.findViewById<SearchView.SearchAutoComplete>(androidx.appcompat.R.id.search_src_text)
+                .setTextColor(
+                    Color.WHITE
+                )
             it.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
             lifecycleScope.launch {
                 it.performDelayedSearch().collect { query ->
