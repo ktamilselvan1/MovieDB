@@ -40,11 +40,18 @@ class MoviesDetailFragment : Fragment(R.layout.fragments_movie_detail) {
                 Status.SUCCESS -> {
                     resource.data?.let { data ->
                         binding.apply {
-                            duration.text = "Duration: ${data.runtime?.getDuration()}".toBold()
-                            companies.text =
-                                "Companies: ${data.productionCompanies?.getCommaSeparatedCompanies()}".toBold()
-                            genres.text =
-                                "Genres: ${data.genres?.getCommaSeparatedGenres()}".toBold()
+                            duration.text = String.format(
+                                getString(R.string.duration),
+                                data.runtime?.getDuration()
+                            ).toBold()
+                            companies.text = String.format(
+                                getString(R.string.companies),
+                                data.productionCompanies?.getCommaSeparatedCompanies()
+                            ).toBold()
+                            genres.text = String.format(
+                                getString(R.string.genres),
+                                data.genres?.getCommaSeparatedGenres()
+                            ).toBold()
                         }
                     } ?: binding.root.showAToast("No data available")
                 }
@@ -59,7 +66,10 @@ class MoviesDetailFragment : Fragment(R.layout.fragments_movie_detail) {
                 requireActivity().title = data.title
                 detailTitle.text = data.title
                 detailDesc.text = data.overview
-                date.text = "Released on: ${data.releaseDate}".toBold()
+                date.text = String.format(
+                    getString(R.string.released),
+                    data.releaseDate
+                ).toBold()
                 Glide.with(requireActivity())
                     .load(BuildConfig.IMAGE_BASE_URL + data.posterPath).into(productImage)
                 data.voteAverage?.let {

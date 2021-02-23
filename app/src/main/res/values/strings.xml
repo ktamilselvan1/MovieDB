@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MovieDB</string>
+
+    <string name="duration">Duration: %s</string>
+    <string name="companies">Companies: %s</string>
+    <string name="genres">Genres: %s</string>
+    <string name="released">Released on: %s</string>
 </resources>
