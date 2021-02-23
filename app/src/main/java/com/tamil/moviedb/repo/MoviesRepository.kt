@@ -7,6 +7,10 @@ import retrofit2.Response
 
 interface MoviesRepository {
     suspend fun getLatestMovies(pageNo: Int): NetworkResource<Response<MovieListResponse>>
+    suspend fun searchMovies(
+        query: String,
+        pageNo: Int
+    ): NetworkResource<Response<MovieListResponse>>
 
     suspend fun getMovieDetail(movieId: Int): NetworkResource<Response<MovieDetailResponse>>
 }

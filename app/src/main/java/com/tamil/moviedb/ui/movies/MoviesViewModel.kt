@@ -18,6 +18,7 @@ import javax.inject.Inject
 class MoviesViewModel @Inject constructor(private val moviesRepository: MoviesRepository) :
     ViewModel() {
     private var pageNo = 1
+    private var queryHolder: String? = null
 
     private var moviesListItems = arrayListOf<ResultsItem>()
     private var movieResponse: MovieListResponse? = null
@@ -32,9 +33,17 @@ class MoviesViewModel @Inject constructor(private val moviesRepository: MoviesRe
         getMovieList()
     }
 
+    /**
+     * Get movies list
+     */
     fun getMovieList() {
+        if (queryHolder != null) {
+            resetPages()
+            queryHolder = null
+        }
         if (pageNo != 1 && pageNo == movieResponse?.totalPages)
             return
+        _moviesListResponse.postValue(Resource.loading(null))
         viewModelScope.launch {
             when (val response = moviesRepository.getLatestMovies(pageNo)) {
                 is NetworkResource.NetworkError -> {
@@ -67,7 +76,11 @@ class MoviesViewModel @Inject constructor(private val moviesRepository: MoviesRe
 
     }
 
+    /**
+     * Get Movie details
+     */
     fun getMovieDetail(movieId: Int) {
+        _movieDetailResponse.postValue(Resource.loading(null))
         viewModelScope.launch {
             when (val response = moviesRepository.getMovieDetail(movieId)) {
                 is NetworkResource.NetworkError -> {
@@ -94,5 +107,53 @@ class MoviesViewModel @Inject constructor(private val moviesRepository: MoviesRe
                 }
             }
         }
+    }
+
+    /**
+     * Search For movies
+     */
+    fun searchMovies(query: String) {
+        if (pageNo != 1 && pageNo == movieResponse?.totalPages)
+            return
+        if (queryHolder == null) {
+            resetPages()
+        }
+        queryHolder = query
+        _moviesListResponse.postValue(Resource.loading(null))
+        viewModelScope.launch {
+            when (val response = moviesRepository.searchMovies(query, pageNo)) {
+                is NetworkResource.NetworkError -> {
+                    _moviesListResponse.postValue(
+                        Resource.error(
+                            "Check your internet connection",
+                            null
+                        )
+                    )
+                }
+                is NetworkResource.ResponseError -> {
+                    _moviesListResponse.postValue(
+                        Resource.error(
+                            response.message ?: "Something went wrong",
+                            null
+                        )
+                    )
+
+                }
+                is NetworkResource.Success -> {
+                    movieResponse = response.value.body()
+                    response.value.body()?.results?.let {
+                        pageNo++
+                        moviesListItems.addAll(it)
+                        _moviesListResponse.postValue(Resource.success(moviesListItems))
+                    }
+                }
+            }
+        }
+    }
+
+    private fun resetPages() {
+        pageNo = 1
+        moviesListItems.clear()
+        _moviesListResponse.postValue(Resource.success(moviesListItems))
     }
 }

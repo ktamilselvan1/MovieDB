@@ -14,4 +14,10 @@ interface MoviesApi {
 
     @GET("movie/{movie_id}")
     suspend fun getMovieDetailCall(@Path("movie_id") movieId: Int): Response<MovieDetailResponse>
+
+    @GET("search/movie")
+    suspend fun searchMovie(
+        @Query("query") query: String,
+        @Query("page") page: Int
+    ): Response<MovieListResponse>
 }
