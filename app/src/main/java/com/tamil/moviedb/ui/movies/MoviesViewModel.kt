@@ -113,11 +113,11 @@ class MoviesViewModel @Inject constructor(private val moviesRepository: MoviesRe
      * Search For movies
      */
     fun searchMovies(query: String) {
-        if (pageNo != 1 && pageNo == movieResponse?.totalPages)
-            return
-        if (queryHolder == null) {
+        if (queryHolder == null || queryHolder!=query) {
             resetPages()
         }
+        if (pageNo != 1 && pageNo == movieResponse?.totalPages)
+            return
         queryHolder = query
         _moviesListResponse.postValue(Resource.loading(null))
         viewModelScope.launch {
